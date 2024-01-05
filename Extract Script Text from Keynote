@@ -1,0 +1,32 @@
+// For those times when you made changes on text within keynote and need a complete text version.
+
+se = Application('System Events')
+key = Application('Keynote')
+key.includeStandardAdditions = true
+
+scriptText = ''
+
+theSlides = key.documents[0].slides
+
+for(i=0;i<theSlides.length;i++){
+
+titleText = theSlides[i].defaultTitleItem.objectText()
+bodyText = theSlides[i].defaultBodyItem.objectText()
+
+scriptText = scriptText + '\n' + titleText + '\n' + bodyText
+
+}
+
+key.setTheClipboardTo(scriptText)
+
+/* te = Application('TextEdit');
+
+   newDoc = te.Document().make()
+   dateString = new Date().toString()
+   slug = "Created: " + dateString + "\n"
+	
+   myText = te.Paragraph({font:"Courier New",color:"black",size:14}, scriptText)
+   	
+   newDoc.paragraphs.push(myText)
+   
+ */
