@@ -1,0 +1,67 @@
+se = Application('System Events')
+key = Application('Keynote')
+app = Application.currentApplication()
+app.includeStandardAdditions = true
+
+titles = ["The Birth of the ENIAC: The First General-Purpose Computer", "Alan Turing and the Turing Machine: Conceptualizing Computation", "Grace Hopper's Invention of the Compiler: Transforming Programming", "The Introduction of IBM 360: A Major Shift in Commercial Computing", "The Rise of Personal Computers: From Altair 8800 to Apple", "The Internet's Early Days: ARPANET and the Birth of a New Era", "Tim Berners-Lee and the Invention of the World Wide Web", "The Evolution of Operating Systems: From UNIX to Modern OS", "The Impact of Moore's Law on Computing Advancements", "The Emergence of Artificial Intelligence: From Turing Test to Modern AI"]
+
+key.activate()
+
+/* images = key.chooseFile({
+	    withPrompt: "Please select some images to add",
+	    ofType: ["public.image"],
+	    multipleSelectionsAllowed: true
+	}) */
+
+doc = key.Document({
+    documentTheme: key.themes['Black']
+	});
+	
+	key.documents.push(doc)
+
+for(i=0;i<titles.length;i++){
+
+	// Create and append a new "Title & Bullets" slide.
+	slide = key.Slide({
+    baseSlide: doc.masterSlides['Titles & Bullets']
+	});
+
+	doc.slides.push(slide);
+
+	slide.defaultTitleItem().objectText=titles[i]
+	
+	cleanTitle = titles[i].replace(/['":]/g, "_")
+	
+	userInput = 'Create 4 or 5 bulletpoint using following as a topic: ' + cleanTitle
+
+	// Construct the JSON payload
+	dataPayload = {
+    "model": "gpt-3.5-turbo",
+    "messages": [
+        { "role": "system", "content": "You are a helpful assistant." },
+        { "role": "user", "content": userInput }
+    	]};
+
+		// Convert the JSON object to a string
+		jsonData = JSON.stringify(dataPayload);
+
+		// Construct the full curl command
+		command = `curl https://api.openai.com/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer API-KEY" -d '${jsonData}'`;
+
+
+		jsonObj = app.doShellScript(command)
+
+		obj = JSON.parse(jsonObj)
+
+		thisMessage = obj.choices[0].message.content
+
+		slide.defaultBodyItem().objectText = thisMessage
+
+
+		/*	key.documents[0].currentSlide.images.push(key.Image({
+  		file: Path(images[i])
+		})) */
+
+	}
+
+
